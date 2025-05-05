@@ -1,5 +1,5 @@
 # ParticlePropertiesClear
-作ったUnity関係のリポジトリのテンプレート
+Unityでパーティクルシステムで使用しないモジュールから参照されているアセットを外すEditor拡張
 
 # 導入方法
 # 使い方
