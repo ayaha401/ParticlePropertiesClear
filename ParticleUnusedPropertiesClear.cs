@@ -104,8 +104,6 @@ namespace AyahaGraphicDevelopTools.ParticlePropertiesClear
                 
                 PrefabUtility.SaveAsPrefabAsset(prefabRoot, path);
                 PrefabUtility.UnloadPrefabContents(prefabRoot);
-                
-                Debug.Log("A");
             }
         }
 
@@ -214,7 +212,7 @@ namespace AyahaGraphicDevelopTools.ParticlePropertiesClear
                 var planeCount = collisionModule.planeCount;
                 if (planeCount > 0)
                 {
-                    for (int i = 0; i < planeCount; i++)
+                    for (int i = planeCount - 1; i >= 0; i--)
                     {
                         collisionModule.RemovePlane(i);
                     }
@@ -249,7 +247,7 @@ namespace AyahaGraphicDevelopTools.ParticlePropertiesClear
                 var colliderCount = triggerModule.colliderCount;
                 if (colliderCount > 0)
                 {
-                    for (int i = 0; i < colliderCount; i++)
+                    for (int i = colliderCount - 1; i >= 0; i--)
                     {
                         triggerModule.RemoveCollider(i);
                     }
@@ -277,7 +275,7 @@ namespace AyahaGraphicDevelopTools.ParticlePropertiesClear
                 var subEmittersCount = subEmitterModule.subEmittersCount;
                 if (subEmittersCount > 0)
                 {
-                    for (int i = 0; i < subEmittersCount; i++)
+                    for (int i = subEmittersCount - 1; i >= 0; i--)
                     {
                         subEmitterModule.RemoveSubEmitter(i);
                     }
@@ -300,12 +298,12 @@ namespace AyahaGraphicDevelopTools.ParticlePropertiesClear
             var textureSheetAnimationModule = particleSystem.textureSheetAnimation;
 
             // 全てのスプライトを消す
-            void RemoveAllSubSprite()
+            void RemoveAllSprite()
             {
-                var subEmittersCount = textureSheetAnimationModule.spriteCount;
-                if (subEmittersCount > 0)
+                var spriteCount = textureSheetAnimationModule.spriteCount;
+                if (spriteCount > 0)
                 {
-                    for (int i = 0; i < subEmittersCount; i++)
+                    for (int i = spriteCount - 1; i >= 0; i--)
                     {
                         textureSheetAnimationModule.RemoveSprite(i);
                     }
@@ -315,13 +313,13 @@ namespace AyahaGraphicDevelopTools.ParticlePropertiesClear
             // 使用されていなかったら関係するアセットを消す
             if (!textureSheetAnimationModule.enabled)
             {
-                RemoveAllSubSprite();
+                RemoveAllSprite();
                 return;
             }
             
             if (textureSheetAnimationModule.mode != ParticleSystemAnimationMode.Sprites)
             {
-                RemoveAllSubSprite();
+                RemoveAllSprite();
             }
         }
 
