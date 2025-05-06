@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
@@ -70,33 +71,41 @@ namespace AyahaGraphicDevelopTools.ParticlePropertiesClear
                 return;
             }
 
-            foreach (var particleObj in _particleObjsProperty)
+            for (int i = 0; i < _particleObjsProperty.arraySize; i++)
             {
-                // GameObjectでなければContinue
-                var gameObj = particleObj as GameObject;
-                if (gameObj == null)
+                SerializedProperty element = _particleObjsProperty.GetArrayElementAtIndex(i);
+                GameObject prefab = element.objectReferenceValue as GameObject;
+                if (prefab == null)
                 {
                     continue;
                 }
+                
+                string path = AssetDatabase.GetAssetPath(prefab);
+                GameObject prefabRoot = PrefabUtility.LoadPrefabContents(path);
 
                 // パーティクルシステム持ってなかったらContinue
-                var particleSystems = gameObj.GetComponentsInChildren<ParticleSystem>(true);
+                var particleSystems = prefabRoot.GetComponentsInChildren<ParticleSystem>(true);
                 if (particleSystems == null || particleSystems.Length == 0)
                 {
                     continue;
                 }
 
-                for (int i = 0; i < particleSystems.Length; i++)
+                for (int j = 0; j < particleSystems.Length; j++)
                 {
-                    ClearShapeModuleProperties(particleSystems[i]);
-                    ClearExternalForcesModuleProperties(particleSystems[i]);
-                    ClearCollisionModuleProperties(particleSystems[i]);
-                    ClearTriggerModuleProperties(particleSystems[i]);
-                    ClearSubEmittersModuleProperties(particleSystems[i]);
-                    ClearTextureSheetAnimationModuleProperties(particleSystems[i]);
-                    ClearLightModuleProperties(particleSystems[i]);
-                    ClearRenderModuleProperties(particleSystems[i]);
+                    ClearShapeModuleProperties(particleSystems[j]);
+                    ClearExternalForcesModuleProperties(particleSystems[j]);
+                    ClearCollisionModuleProperties(particleSystems[j]);
+                    ClearTriggerModuleProperties(particleSystems[j]);
+                    ClearSubEmittersModuleProperties(particleSystems[j]);
+                    ClearTextureSheetAnimationModuleProperties(particleSystems[j]);
+                    ClearLightModuleProperties(particleSystems[j]);
+                    ClearRenderModuleProperties(particleSystems[j]);
                 }
+                
+                PrefabUtility.SaveAsPrefabAsset(prefabRoot, path);
+                PrefabUtility.UnloadPrefabContents(prefabRoot);
+                
+                Debug.Log("A");
             }
         }
 
@@ -345,7 +354,7 @@ namespace AyahaGraphicDevelopTools.ParticlePropertiesClear
                 {
                     renderer.material = null;
                     renderer.trailMaterial = null;
-                    renderer.mesh = null;
+                    renderer.SetMeshes(Array.Empty<Mesh>());
                     renderer.probeAnchor = null;
                     return;
                 }
@@ -353,7 +362,7 @@ namespace AyahaGraphicDevelopTools.ParticlePropertiesClear
                 // RenderModeがMeshでなければMeshへの参照を消す
                 if (renderer.renderMode != ParticleSystemRenderMode.Mesh)
                 {
-                    renderer.mesh = null;
+                    renderer.SetMeshes(Array.Empty<Mesh>());
                 }
 
                 // LightProbeUsageがBlendProbesでなければprobeAnchorの参照を消す
